@@ -1,0 +1,28 @@
+{
+  "name": "netology",
+  "version": "1.0.0",
+  "description": "test tasks from Netology.ru",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zagran/netology.git"
+  },
+  "keywords": [
+    "nodejs",
+    "netology"
+  ],
+  "author": "zagran@uplanet.biz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zagran/netology/issues"
+  },
+  "homepage": "https://github.com/zagran/netology#readme",
+  "dependencies": {
+    "del": "^2.2.2",
+    "fs": "0.0.1-security",
+    "path": "^0.12.7"
+  }
+}
