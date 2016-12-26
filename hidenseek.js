@@ -29,7 +29,7 @@ function hidePokemon(file, name, level) {
     })
 }
 
-function hide(dir = './fields',allPokemons) {
+function hide(dir = './fields', allPokemons) {
     return new Promise((resolve, reject) => {
         if (allPokemons.length > 3) {
             allPokemons = allPokemons.slice(0, 3);
@@ -42,21 +42,29 @@ function hide(dir = './fields',allPokemons) {
                 for (let i = 1; i <= 10; i++) {
                     let s = "0" + i;
                     let pokemonDir = s.substr(s.length - 2);
-                    fs.mkdir(dir + '/' + pokemonDir, (err) => {
-                        if (err) throw err;
-                    });
+                    var createDirs = [];
+                    createDirs.push(new Promise((resolve, reject) => {
+                        fs.mkdir(dir + '/' + pokemonDir, (err) => {
+                            if (err) throw err;
+                            resolve();
+                        });
+                    }));
                 }
-                hidePokemon(dir + '/' + pokemonLocations[0] + '/pokemon.txt', allPokemons[0].name, allPokemons[0].level)
+                return Promise.all(createDirs)
                     .then(() => {
-                        return hidePokemon(dir + '/' + pokemonLocations[1] + '/pokemon.txt', allPokemons[1].name, allPokemons[1].level)
+                        return hidePokemon(dir + '/' + pokemonLocations[0] + '/pokemon.txt', allPokemons[0].name, allPokemons[0].level)
+                            .then(() => {
+                                return hidePokemon(dir + '/' + pokemonLocations[1] + '/pokemon.txt', allPokemons[1].name, allPokemons[1].level)
 
+                            })
+                            .then(() => {
+                                return hidePokemon(dir + '/' + pokemonLocations[2] + '/pokemon.txt', allPokemons[2].name, allPokemons[2].level)
+                            })
+                            .then(() => {
+                                resolve();
+                            });
                     })
-                    .then(() => {
-                        return hidePokemon(dir + '/' + pokemonLocations[2] + '/pokemon.txt', allPokemons[2].name, allPokemons[2].level)
-                    })
-                    .then(() => {
-                        resolve();
-                    });
+
 
             });
         });
@@ -77,61 +85,25 @@ function searchPokemon(file) {
 function seek(dir = './fields') {
     return new Promise((resolve, reject) => {
 
-        var found = new PokemonList();
+        var search = [];
 
-        searchPokemon(dir + '/01/pokemon.txt')
-            .then(data => {
-                if (data) {
-                    found.add(data.split('|')[0], data.split('|')[1])
+        for (let i = 1; i <= 10; i++) {
+            let s = "0" + i;
+            let pokemonDir = s.substr(s.length - 2);
+
+            search.push(searchPokemon(dir + '/' + pokemonDir + '/pokemon.txt'));
+        }
+
+        return Promise.all(search).then((data) => {
+            var found = new PokemonList();
+            data.forEach((item) => {
+                if (item) {
+                    found.add(item.split('|')[0], item.split('|')[1]);
                 }
-                return searchPokemon(dir + '/02/pokemon.txt');
-            }).then(data => {
-            if (data) {
-                found.add(data.split('|')[0], data.split('|')[1])
-            }
-            return searchPokemon(dir + '/03/pokemon.txt');
-        }).then(data => {
-            if (data) {
-                found.add(data.split('|')[0], data.split('|')[1])
-            }
-            return searchPokemon(dir + '/04/pokemon.txt');
-        }).then(data => {
-            if (data) {
-                found.add(data.split('|')[0], data.split('|')[1])
-            }
-            return searchPokemon(dir + '/05/pokemon.txt');
-        }).then(data => {
-            if (data) {
-                found.add(data.split('|')[0], data.split('|')[1])
-            }
-            return searchPokemon(dir + '/06/pokemon.txt');
-        }).then(data => {
-            if (data) {
-                found.add(data.split('|')[0], data.split('|')[1])
-            }
-            return searchPokemon(dir + '/07/pokemon.txt');
-        }).then(data => {
-            if (data) {
-                found.add(data.split('|')[0], data.split('|')[1])
-            }
-            return searchPokemon(dir + '/08/pokemon.txt');
-        }).then(data => {
-            if (data) {
-                found.add(data.split('|')[0], data.split('|')[1])
-            }
-            return searchPokemon(dir + '/09/pokemon.txt');
-        }).then(data => {
-            if (data) {
-                found.add(data.split('|')[0], data.split('|')[1])
-            }
-            return searchPokemon(dir + '/10/pokemon.txt');
-        }).then(data => {
-            if (data) {
-                found.add(data.split('|')[0], data.split('|')[1])
-            }
+            })
             console.log(found);
-            return found;
-        });
+            resolve(found);
+        })
     })
 }
 
