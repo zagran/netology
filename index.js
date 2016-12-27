@@ -22,8 +22,8 @@ if (args && args[0] == 'hide') {
     pokemonGo.seek(args[1]);
 }
 else {
-    pokemonGo.hide('./fields2', allPokemons)
+    pokemonGo.hide('./fields', allPokemons)
         .then(() => {
-            pokemonGo.seek('./fields2');
+            pokemonGo.seek('./fields');
         });
 }

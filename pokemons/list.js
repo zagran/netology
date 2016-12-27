@@ -14,8 +14,8 @@ class Pokemon {
 
 class PokemonList extends Array {
 
-    add(name, level) {
-        this.push(new Pokemon(name, level));
+    add(pokemon) {
+        this.push(pokemon);
     }
 
     show() {
